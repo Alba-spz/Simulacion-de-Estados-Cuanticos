@@ -1,31 +1,27 @@
 from simulador_cuantico.repositorio import RepositorioDeEstados
+from simulador_cuantico.operador import OperadorCuantico
 
 repo = RepositorioDeEstados()
 
-# Listar estados vacíos
-print(">>> Estados actuales:")
-for linea in repo.listar_estados():
-    print(linea)
+# Agregar estado psi = |+> = [0.707, 0.707]
+repo.agregar_estado("psi", [0.707, 0.707], "computacional")
 
-# Agregar algunos estados
-repo.agregar_estado("q0", [1, 0], "computacional")
-repo.agregar_estado("q1", [0, 1], "computacional")
+# Definir puerta Hadamard
+H = OperadorCuantico("H", [[0.707, 0.707], [0.707, -0.707]])
 
-print("\n>>> Después de agregar q0 y q1:")
-for linea in repo.listar_estados():
-    print(linea)
+# Aplicar H a psi (debería volver a |0>)
+repo.aplicar_operador("psi", H, "psi_H")
 
-# Intentar agregar un duplicado
-repo.agregar_estado("q1", [0.5, 0.5], "computacional")
+# Mostrar resultado
+estado_resultado = repo.obtener_estado("psi_H")
+if estado_resultado:
+    print("\nEstado psi_H:")
+    print(estado_resultado)
+    print("Vector:", estado_resultado.vector)
 
-# Obtener estado existente
-estado_q0 = repo.obtener_estado("q0")
-print(f"\nMedición de q0: {estado_q0.medir()}" if estado_q0 else "Estado q0 no encontrado.")
+# Confirmar que los estados están bien en el repositorio
+print("\n>>> Todos los estados:")
+for desc in repo.listar_estados():
+    print(desc)
 
-# Eliminar un estado
-repo.eliminar_estado("q1")
-
-print("\n>>> Después de eliminar q1:")
-for linea in repo.listar_estados():
-    print(linea)
 

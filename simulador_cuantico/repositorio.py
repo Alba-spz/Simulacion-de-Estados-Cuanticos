@@ -30,3 +30,26 @@ class RepositorioDeEstados:
         else:
             print(f"No existe un estado con id '{id}'.")
 
+    def aplicar_operador(self, id_estado: str, operador, nuevo_id: str = None):
+        estado_original = self.obtener_estado(id_estado)
+        if estado_original is None:
+            print(f"Error: no se encontró el estado con id '{id_estado}'")
+            return
+
+        # Validación de dimensiones
+        n = len(estado_original.vector)
+        if len(operador.matriz) != n or any(len(fila) != n for fila in operador.matriz):
+            print(f"Error: la dimensión del operador '{operador.nombre}' no coincide con la del estado '{id_estado}'")
+            return
+
+        # Aplicar el operador
+        nuevo_estado = operador.aplicar(estado_original)
+
+        # Asignar id nuevo (o derivado automáticamente)
+        if nuevo_id is not None:
+            nuevo_estado.id = nuevo_id
+        else:
+            nuevo_estado.id = f"{id_estado}_{operador.nombre}"
+
+        # Almacenar: permitir sobreescritura si el id ya existe
+        self.estados[nuevo_estado.id] = nuevo_estado
