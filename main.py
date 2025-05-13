@@ -3,25 +3,17 @@ from simulador_cuantico.operador import OperadorCuantico
 
 repo = RepositorioDeEstados()
 
-# Agregar estado psi = |+> = [0.707, 0.707]
-repo.agregar_estado("psi", [0.707, 0.707], "computacional")
+# Estado |0⟩
+repo.agregar_estado("q0", [1, 0], "computacional")
+repo.medir_estado("q0")
+# Esperado: 100% estado 0, 0% estado 1
 
-# Definir puerta Hadamard
-H = OperadorCuantico("H", [[0.707, 0.707], [0.707, -0.707]])
+# Estado |+⟩
+repo.agregar_estado("plus", [0.707, 0.707], "computacional")
+repo.medir_estado("plus")
+# Esperado: ~50% en cada base
 
-# Aplicar H a psi (debería volver a |0>)
-repo.aplicar_operador("psi", H, "psi_H")
-
-# Mostrar resultado
-estado_resultado = repo.obtener_estado("psi_H")
-if estado_resultado:
-    print("\nEstado psi_H:")
-    print(estado_resultado)
-    print("Vector:", estado_resultado.vector)
-
-# Confirmar que los estados están bien en el repositorio
-print("\n>>> Todos los estados:")
-for desc in repo.listar_estados():
-    print(desc)
+# Estado no existente
+repo.medir_estado("no_existe")  # Debería mostrar error
 
 

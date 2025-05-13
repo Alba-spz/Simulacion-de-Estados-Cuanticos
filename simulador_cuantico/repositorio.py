@@ -53,3 +53,15 @@ class RepositorioDeEstados:
 
         # Almacenar: permitir sobreescritura si el id ya existe
         self.estados[nuevo_estado.id] = nuevo_estado
+
+    def medir_estado(self, id_estado: str):
+        estado = self.obtener_estado(id_estado)
+        if estado is None:
+            print(f"Error: no se encontró el estado con id '{id_estado}'")
+            return
+
+        probabilidades = estado.medir()
+        print(f"Medición del estado '{id_estado}' (base {estado.base}):")
+        for i, p in enumerate(probabilidades):
+            porcentaje = round(p * 100, 2)
+            print(f"  - Estado base {i}: {porcentaje}%")
