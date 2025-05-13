@@ -1,13 +1,29 @@
 import numpy as np
-from .estado import EstadoCuantico
+from simulador_cuantico.estado import EstadoCuantico
 
 class OperadorCuantico:
-    def __init__(self, nombre, matriz):
+    def __init__(self, nombre: str, matriz):
         self.nombre = nombre
         self.matriz = np.array(matriz, dtype=complex)
 
-    def aplicar(self, estado: EstadoCuantico, nuevo_id=None):
-        """Devuelve un nuevo EstadoCuantico al aplicar la operación a un estado dado."""
-        nuevo_vector = np.dot(self.matriz, np.array(estado.vector))
-        nuevo_id = nuevo_id or f"{estado.identificador}_{self.nombre}"
-        return EstadoCuantico(nuevo_id, nuevo_vector.tolist(), estado.base)
+        # Validación básica: matriz cuadrada
+        if self.matriz.shape[0] != self.matriz.shape[1]:
+            raise ValueError("La matriz del operador debe ser cuadrada.")
+
+    def aplicar(self, estado: EstadoCuantico, nuevo_id: str = None) -> EstadoCuantico:
+        vector_original = np.array(estado.vector, dtype=complex)
+
+        # Validar dimensiones
+        if self.matriz.shape[1] != vector_original.shape[0]:
+            raise ValueError("Las dimensiones del operador y del estado no coinciden.")
+
+        nuevo_vector = np.dot(self.matriz, vector_original)
+
+        return EstadoCuantico(
+            id=nuevo_id if nuevo_id else f"{estado.id}_{self.nombre}",
+            vector=nuevo_vector.tolist(),
+            base=estado.base
+        )
+
+    def __str__(self):
+        return f"Operador {self.nombre}: matriz=\n{self.matriz}"
