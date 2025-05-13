@@ -1,33 +1,32 @@
-from .estado import EstadoCuantico
-from .operador import OperadorCuantico
+from simulador_cuantico.estado import EstadoCuantico
 
 class RepositorioDeEstados:
     def __init__(self):
         self.estados = {}
 
     def listar_estados(self):
+        if not self.estados:
+            return ["No hay estados registrados."]
         return [str(estado) for estado in self.estados.values()]
 
-    def agregar_estado(self, identificador, vector, base="computacional"):
-        if identificador in self.estados:
-            raise ValueError(f"Ya existe un estado con ID: {identificador}")
-        self.estados[identificador] = EstadoCuantico(identificador, vector, base)
+    def agregar_estado(self, id: str, vector, base: str):
+        if id in self.estados:
+            print(f"Error: ya existe un estado con identificador '{id}'")
+            return
 
-    def obtener_estado(self, identificador):
-        return self.estados.get(identificador)
+        try:
+            nuevo_estado = EstadoCuantico(id, vector, base)
+            self.estados[id] = nuevo_estado
+        except Exception as e:
+            print(f"Error al crear el estado cuántico: {e}")
 
-    def aplicar_operador(self, id_estado, operador: OperadorCuantico, nuevo_id=None):
-        estado = self.obtener_estado(id_estado)
-        if not estado:
-            raise ValueError("Estado no encontrado")
-        nuevo_estado = operador.aplicar(estado, nuevo_id)
-        if nuevo_estado.identificador in self.estados:
-            raise ValueError("El nuevo identificador ya existe")
-        self.estados[nuevo_estado.identificador] = nuevo_estado
-        return nuevo_estado
+    def obtener_estado(self, id: str):
+        return self.estados.get(id, None)
 
-    def medir_estado(self, identificador):
-        estado = self.obtener_estado(identificador)
-        if not estado:
-            raise ValueError("Estado no encontrado")
-        return estado.medir()
+    def eliminar_estado(self, id: str):
+        if id in self.estados:
+            del self.estados[id]
+            print(f"Estado '{id}' eliminado.")
+        else:
+            print(f"No existe un estado con id '{id}'.")
+
